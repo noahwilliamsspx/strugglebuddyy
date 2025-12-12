@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Struggle Buddy App</title>
 
   <!-- Styles -->
@@ -111,25 +111,46 @@
     const mainButton = document.getElementById('mainButton');
     const inputBox = document.getElementById('inputBox');
 
-    // Show input box when button is clicked
     mainButton.addEventListener('click', () => {
       mainButton.style.display = 'none';
       inputBox.style.display = 'flex';
       document.getElementById('phoneInput').focus();
     });
 
-    // Submit number to Firebase
     document.getElementById('submitPhone').addEventListener('click', () => {
       const number = document.getElementById('phoneInput').value.trim();
-      if(number) {
-        db.ref('phoneNumbers').push(number)
-          .then(() => {
-            alert('Thanks! Your number has been added.');
-            document.getElementById('phoneInput').value = '';
-            document.getElementById('phoneInput').focus();
-          })
-          .catch(err => alert('Error: ' + err));
-      }
+      if(!number) return;
+
+      const phoneRef = db.ref('phoneNumbers');
+      const matchesRef = db.ref('matches');
+
+      phoneRef.once('value', snapshot => {
+        const unpaired = snapshot.val();
+        let paired = false;
+
+        if(unpaired) {
+          const keys = Object.keys(unpaired);
+          const firstKey = keys[0];
+          const firstNumber = unpaired[firstKey];
+
+          // Create match
+          matchesRef.push({ user1: firstNumber, user2: number });
+
+          // Remove paired number
+          phoneRef.child(firstKey).remove();
+
+          alert(`You are paired with: ${firstNumber}`);
+          paired = true;
+        }
+
+        if(!paired) {
+          phoneRef.push(number)
+            .then(() => alert('Waiting for someone to be paired with you...'))
+            .catch(err => alert('Error: ' + err));
+        }
+
+        document.getElementById('phoneInput').value = '';
+      });
     });
   </script>
 
