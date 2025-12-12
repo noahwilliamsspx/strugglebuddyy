@@ -111,7 +111,7 @@
           // No available number, add yourself to waiting list
           phoneRef.push(number)
             .then(() => {
-              resultDiv.textContent = 'Waiting for someone to be paired with you...you will get a text when pired!';
+              resultDiv.textContent = 'Waiting for someone to be paired with you...you will get a text when paired!';
             })
             .catch(err => alert('Error: ' + err));
         }
