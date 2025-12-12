@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Struggle Buddy List</title>
+
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(120deg, #b8eac7, #fbf3b0, #c9e5ff, #e3c8ff);
+      background-size: 400% 400%;
+      animation: gradientShift 12s ease infinite;
+      font-family: Arial, sans-serif;
+      flex-direction: column;
+      padding: 20px;
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    .number-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 70vh;
+      overflow-y: auto;
+      width: 100%;
+      max-width: 300px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .number-list div {
+      background-color: rgba(255, 255, 255, 0.6);
+      padding: 10px;
+      border-radius: 8px;
+    }
+  </style>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+</head>
+<body>
+
+  <h1>Struggle Buddy Numbers</h1>
+  <div class="number-list" id="numberList"></div>
+
+  <script>
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "strugglebuddy-9ac15",
+      authDomain: "strugglebuddy-9ac15.firebaseapp.com",
+      databaseURL: "https://strugglebuddy-9ac15-default-rtdb.firebaseio.com",
+      projectId: "strugglebuddy-9ac15",
+      storageBucket: "strugglebuddy-9ac15.appspot.com",
+      messagingSenderId: "1234567890",
+      appId: "1:1234567890:web:abcdef123456"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    const numberListDiv = document.getElementById('numberList');
+
+    // Listen for new numbers in realtime
+    db.ref('phoneNumbers').on('child_added', snapshot => {
+      const num = snapshot.val();
+      const div = document.createElement('div');
+      div.textContent = num;
+      numberListDiv.appendChild(div);
+    });
+  </script>
+
+</body>
+</html>
